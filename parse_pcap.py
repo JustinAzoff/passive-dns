@@ -66,4 +66,8 @@ if __name__ == "__main__":
     outf = "/dev/stdout"
     if len(sys.argv) > 2:
         outf = sys.argv[2]
+    if outf == "auto":
+        outf = inf.replace(".pcap",".txt")
+        if outf == inf:
+            raise Exception("Same filename???")
     report(inf, outf)
