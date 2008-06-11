@@ -31,6 +31,8 @@ def find(d):
 
 def process(fn):
     outfn = fn.replace("pcap","") + ".txt.gz"
+    if '..' in outfn:
+        outfn = outfn.replace("..", ".0.")
     print 'process', fn
     newfn = fn + ".processing"
     os.rename(fn, newfn)
