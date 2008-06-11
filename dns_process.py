@@ -44,7 +44,7 @@ def process(fn):
 
 def main():
     for f in find(LOC):
-        if 'processing' in f: continue
+        if 'processing' in f or 'pcap' not in f: continue
 
         if os.path.exists(next_filename(f)) or not is_growing(f):
             process(f)
