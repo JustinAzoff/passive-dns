@@ -49,9 +49,21 @@ def parse(fn):
     s = Statmaker()
     pcap = pcapy.open_offline(fn)
     pcap.loop(0, s)
+
+    return s
+
+def report(fn, outfn):
+    s = parse(fn)
+    f = open(outfn, 'w')
+
     for (ip, name), rec in s.ipnames.iteritems():
-        print ip, name, rec['ttl'], date(rec['first']),date(rec['last'])
+        f.write("%s %s %s %s %s\n" % (ip, name, rec['ttl'], date(rec['first']),date(rec['last'])))
+    f.close()
 
 if __name__ == "__main__":
     import sys
-    parse(sys.argv[1])
+    inf = sys.argv[1]
+    outf = "/dev/stdout"
+    if len(sys.argv) > 2:
+        outf = sys.argv[2]
+    report(inf, outf)
