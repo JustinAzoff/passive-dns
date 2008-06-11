@@ -2,6 +2,7 @@
 import pcapy
 import dns.message
 import time, datetime
+import gzip
 import psyco
 psyco.full()
 
@@ -54,7 +55,11 @@ def parse(fn):
 
 def report(fn, outfn):
     s = parse(fn)
-    f = open(outfn, 'w')
+    if outfn.endswith("gz"):
+        o = gzip.open
+    else:
+        o = open
+    f = o(outfn, 'w')
 
     for (ip, name), rec in s.ipnames.iteritems():
         f.write("%s %s %s %s %s\n" % (ip, name, rec['ttl'], date(rec['first']),date(rec['last'])))
@@ -67,7 +72,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 2:
         outf = sys.argv[2]
     if outf == "auto":
-        outf = inf.replace(".pcap",".txt")
+        outf = inf.replace(".pcap",".txt.gz")
         if outf == inf:
             raise Exception("Same filename???")
     report(inf, outf)
