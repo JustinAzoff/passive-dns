@@ -3,8 +3,13 @@ import os
 import sys
 
 def get_file(fn):
-    for line in os.popen('zcat "%s"' % fn):
+    if fn.endswith(".gz"):
+        f = os.popen('zcat "%s"' % fn)
+    else:
+        f = open(fn)
+    for line in f:
         yield line.split()
+    f.close()
 
 def parse_file(fn, data):
     for parts in get_file(fn):
@@ -37,4 +42,6 @@ def merge(files):
 
 if __name__ == "__main__":
     fns = sys.argv[1:]
+    if not fns:
+        fns=['/dev/stdin']
     merge(fns)
