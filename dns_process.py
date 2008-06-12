@@ -41,11 +41,11 @@ def get_filename_from_pcap(fn):
 
 def process(fn):
     print 'process', fn
-    newfn = fn + ".processing"
-    os.rename(fn, newfn)
 
     outfn = get_filename_from_pcap(fn)
 
+    newfn = fn + ".processing"
+    os.rename(fn, newfn)
     #not sure about leaks, so lets just exec this
     ret = os.system("dns_parse_pcap.py %s %s" % (newfn, outfn))
     if ret != 0:
