@@ -8,15 +8,23 @@ psyco.full()
 
 OFFSET = 42
 A = 1
+CNAME = 5
+
+TYPES = {
+    A: 'A',
+    CNAME: 'CNAME'
+}
 
 def date(d):
     return datetime.datetime.fromtimestamp(d).strftime("%Y-%m-%d %H:%M:%S")
 
-def get_ips(m):
+def get_answers(m):
     for a in m.answer:
-        if a.rdtype != A: continue
+        if a.rdtype not in TYPES: continue
         for i in a:
-            yield i.to_text(), a.ttl
+            yield i.to_text(), TYPES[a.rdtype], a.ttl
+#            if a.rdtype == CNAME:
+                #raise 'test'
 
 def get_query(m):
     query = m.question[0].to_text().split()[0]
@@ -37,8 +45,8 @@ class Statmaker:
 
         ipn = self.ipnames
 
-        for ip, ttl in get_ips(m):
-            tup = (ip, query)
+        for answer, type, ttl in get_answers(m):
+            tup = (answer, query, type)
             if tup in ipn:
                 r = ipn[tup]
                 r.update({'last': ts, 'ttl': ttl})
@@ -61,8 +69,8 @@ def report(fn, outfn):
         o = open
     f = o(outfn, 'w')
 
-    for (ip, name), rec in s.ipnames.iteritems():
-        f.write("%s %s %s %s %s\n" % (ip, name, rec['ttl'], date(rec['first']),date(rec['last'])))
+    for (answer, query, type), rec in s.ipnames.iteritems():
+        f.write("%s %s %s %s %s %s\n" % (answer, query, type, rec['ttl'], date(rec['first']),date(rec['last'])))
     f.close()
 
 if __name__ == "__main__":
