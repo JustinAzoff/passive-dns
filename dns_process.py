@@ -35,8 +35,10 @@ def get_filename_from_pcap(fn):
     new_dir = pcap_time.strftime("%Y/%m/%d")
     new_name = pcap_time.strftime("dns_%Y-%m-%d_%H:%M.txt.gz")
 
-    os.makedirs(os.path.join(LOC, new_dir))
-    outfn = os.path.join(LOC, new_dir, new_name)
+    new_dir = os.path.join(LOC, new_dir)
+    if not os.path.exists(new_dir):
+        os.makedirs(new_dir)
+    outfn = os.path.join(new_dir, new_name)
     return outfn
 
 def process(fn):
