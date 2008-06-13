@@ -46,6 +46,7 @@ class Searcher:
     def binary_search(self, q):
         start = 0
         end = self.size
+        found = False
         while end - start > 10:
             mid = (start+end)/2
             self.map.seek(mid)
@@ -53,8 +54,8 @@ class Searcher:
             line = self.map.readline()
             key = line.split(None,2)[0]
             if key.startswith(q):
+                found = True
                 break
-
             if q < key:
                 end = mid
                 continue
@@ -67,15 +68,21 @@ class Searcher:
         mid = (start+end)/2
         self.map.seek(mid)
 
-        #sanity check, is this key even found
+        #sanity check, is this key even found around where I am looking?
         #if I don't do this, self.map.find will search to
-        #the end of the file
-        self.map.seek(-1024, SEEK_CUR)
-        data = self.map.read(1024)
-        if q not in data:
-            return
+        #the end of the file.  read pos-512 to pos+512
+        if not found:
+            cur = self.map.tell()
+            seek_to = max(0, self.map.tell() - 512)
+            to_read = self.map.tell() - seek_to
+            self.map.seek(seek_to, SEEK_SET)
+            data = self.map.read(to_read+512)
+            if q not in data:
+                return
+            self.map.seek(cur, SEEK_SET)
 
         #now, try and find the FIRST occurance of this key
+        #go back 2000, find the first reference to this ip, repeat if needed
         while True:
             seek_to = max(0, self.map.tell() - 2000)
             self.map.seek(seek_to, SEEK_SET)
@@ -83,7 +90,7 @@ class Searcher:
                 break
             pos = self.map.find("\n" + q)
             self.map.seek(pos+1)
-            #if I needed to skip back forward more than 1000, I should be OK
+            #if I needed to re-skip forward more than 1000, I should be OK
             #otherwise jump backwards another 2000 and try again
             if pos - seek_to > 1000:
                 break
