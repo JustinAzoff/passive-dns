@@ -54,7 +54,7 @@ def process(fn):
 
     newfn = fn + ".processing"
     os.rename(fn, newfn)
-    dns_parse_pcap.report(newfn, answer_outfn, query_outfn)
+    parse_pcap.report(newfn, answer_outfn, query_outfn)
     os.unlink(newfn)
 
 
