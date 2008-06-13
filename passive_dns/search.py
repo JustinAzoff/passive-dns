@@ -5,11 +5,11 @@ import mmap
 
 from passive_dns import merge
 
-def do_mmap(f, mode):
-    fd = os.open(f, os.O_RDWR)
+def do_mmap(f):
+    fd = os.open(f, os.O_RDONLY)
     size = os.lseek(fd, 0, 2)
     os.lseek(fd, 0, 0)
-    m = mmap.mmap(fd, size, prot=mode)
+    m = mmap.mmap(fd, size, prot=mmap.PROT_READ)
     return m, size, fd
 
 SEEK_SET = 0
@@ -18,7 +18,7 @@ SEEK_CUR = 1
 class Searcher:
     def __init__(self, file):
         self.file = file
-        self.map, self.size, self.fd = do_mmap(file, mmap.PROT_READ)
+        self.map, self.size, self.fd = do_mmap(file)
 
     def close(self):
         self.map.close()
