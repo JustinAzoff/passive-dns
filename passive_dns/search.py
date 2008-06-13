@@ -100,7 +100,7 @@ class SearcherMany:
 
     def _search(self, q):
         results = [s.binary_search(q) for s in self.searchers]
-        merged = dns_merge.merge_and_merge(results)
+        merged = merge.merge_and_merge(results)
         return merged
 
     def search(self, answer=None, query=None):
