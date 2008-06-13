@@ -32,7 +32,7 @@ class SearchServer(xmlrpc.XMLRPC):
     def xmlrpc_hello(self):
         return 'hello'
 
-    def xmlrpc_search_qustion(self, q):
+    def xmlrpc_search_question(self, q):
         return list(self.q_search.search(query=q))
 
     def xmlrpc_search_answer(self, q):
