@@ -27,10 +27,7 @@ def merge(files):
             del files[f]
 
 
-def merge_sorted(sorted_stream, output):
-    if os.path.exists(output) and output!="/dev/stdout":
-        raise Exception("Output file %s already exists" % output)
-    f = open(output,'w')
+def merge_sorted(sorted_stream):
     sorted_stream = iter(sorted_stream)
 
     try:
@@ -49,18 +46,26 @@ def merge_sorted(sorted_stream, output):
             prev['first'] = min(prev['first'], cur['first'])
             prev['last']  = max(prev['last'],  cur['last'])
         else:
-            f.write("%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s\n" % prev)
+            yield prev
             prev = cur
 
     if cur:
-        f.write("%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s\n" % cur)
+        yield cur
 
-def do_merge(streams, output):
+def merge_and_merge(streams):
     merged = merge(streams)
-    merge_sorted(merged, output)
+    return merge_sorted(merged)
+
+def do_merge_to_file(streams, output):
+    if os.path.exists(output) and output!="/dev/stdout":
+        raise Exception("Output file %s already exists" % output)
+    f = open(output,'w')
+
+    for cur in merge_and_merge(streams):
+        f.write("%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s\n" % cur)
 
 if __name__ == "__main__":
     output = sys.argv[1]
     fns = sys.argv[2:]
     fps = [open(f) for f in fns]
-    do_merge(fps, output)
+    do_merge_to_file(fps, output)

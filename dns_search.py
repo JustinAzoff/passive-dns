@@ -72,10 +72,25 @@ class Searcher:
 class SearcherMany:
     def __init__(self, files):
         self.searchers = [Searcher(f) for f in files]
-
-    def search(self, q):
+    def _search(self, q):
         results = [s.binary_search(q) for s in self.searchers]
-        dns_merge.do_merge(results, "/dev/stdout")
+        merged = dns_merge.merge_and_merge(results)
+        return merged
+
+    def search(self, response=None, query=None):
+        if response:
+            q = response
+        if query:
+            q = query[::-1]
+
+        results = self._search(q)
+        if response:
+            for r in results:
+                yield r
+        if query:
+            for r in results:
+                r['key']=r['key'][::-1]
+                yield r
     
 
 def main():
