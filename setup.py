@@ -1,5 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
+from glob import glob
+
 
 version = '0.1'
 
@@ -20,6 +22,7 @@ setup(name='passive_dns',
       install_requires=[
           # -*- Extra requirements: -*-
       ],
+      scripts=glob('scripts/*'),
       entry_points = {
           'console_scripts': [
               'passive-dns-merge    = passive_dns.merge:main',
