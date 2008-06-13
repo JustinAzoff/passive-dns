@@ -28,11 +28,16 @@ def merge(files):
 
 
 def merge_sorted(sorted_stream, output):
+    if os.path.exists(output) and output!="/dev/stdout":
+        raise Exception("Output file %s already exists" % output)
     f = open(output,'w')
     sorted_stream = iter(sorted_stream)
 
-    line = sorted_stream.next()
-    prev = make_hash(line)
+    try:
+        line = sorted_stream.next()
+    except StopIteration:
+        return
+    prev = cur = make_hash(line)
 
     for line in sorted_stream:
         cur = make_hash(line)
@@ -47,14 +52,15 @@ def merge_sorted(sorted_stream, output):
             f.write("%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s\n" % prev)
             prev = cur
 
-    f.write("%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s\n" % cur)
+    if cur:
+        f.write("%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s\n" % cur)
 
-def do_merge(files, output):
-    fps = [open(f) for f in files]
-    merged = merge(fps)
+def do_merge(streams, output):
+    merged = merge(streams)
     merge_sorted(merged, output)
 
 if __name__ == "__main__":
     output = sys.argv[1]
     fns = sys.argv[2:]
-    do_merge(fns, output)
+    fps = [open(f) for f in fns]
+    do_merge(fps, output)

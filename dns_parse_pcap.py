@@ -22,7 +22,7 @@ def get_answers(m):
     for a in m.answer:
         if a.rdtype not in TYPES: continue
         for i in a:
-            yield i.to_text(), TYPES[a.rdtype], a.ttl
+            yield i.to_text().lower(), TYPES[a.rdtype], a.ttl
 #            if a.rdtype == CNAME:
                 #raise 'test'
 
@@ -30,7 +30,7 @@ def get_query(m):
     query = m.question[0].to_text().split()[0]
     if query.endswith("."):
         query = query[:-1]
-    return query
+    return query.lower()
         
 class Statmaker:
     def __init__(self):
