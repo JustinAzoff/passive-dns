@@ -59,6 +59,15 @@ class Searcher:
 
         mid = (start+end)/2
         self.map.seek(mid)
+
+        #sanity check, is this key even found
+        #if I don't do this, self.map.find will search to
+        #the end of the file
+        self.map.seek(-1024, SEEK_CUR)
+        data = self.map.read(1024)
+        if q not in data:
+            return
+
         #now, try and find the FIRST occurance of this key
         while True:
             seek_to = max(0, self.map.tell() - 2000)
