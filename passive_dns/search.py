@@ -3,7 +3,7 @@ import sys
 import os
 import mmap
 
-import dns_merge
+from passive_dns import merge
 
 def do_mmap(f, mode):
     fd = os.open(f, os.O_RDWR)

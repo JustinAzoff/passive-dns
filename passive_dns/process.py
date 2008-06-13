@@ -2,7 +2,7 @@
 import os
 import time
 import datetime
-import dns_parse_pcap
+from passive_dns import parse_pcap
 
 LOC="/var/captures/dns/"
 

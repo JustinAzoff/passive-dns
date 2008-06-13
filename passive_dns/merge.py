@@ -2,7 +2,7 @@
 import os
 import sys
 
-from dns_common import make_hash
+from passive_dns.common import make_hash
 
 #like sort -m
 def merge(files):

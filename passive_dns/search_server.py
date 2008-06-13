@@ -13,8 +13,8 @@ from twisted.internet.task import LoopingCall
 #import time
 
 import os, glob
-import dns_search
-from dns_common import query_dir, answer_dir
+from passive_dns import search as dns_search
+from passive_dns.common import query_dir, answer_dir
 
 class SearchServer(xmlrpc.XMLRPC):
     def __init__(self):
