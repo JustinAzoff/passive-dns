@@ -56,8 +56,6 @@ class Searcher:
             elif q > line:
                 start = mid
 
-
-
         while True:
             line = self.map.readline()
             if not line.startswith(q): break
