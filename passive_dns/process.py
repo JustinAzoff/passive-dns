@@ -45,7 +45,7 @@ def make_dir(d):
         os.makedirs(d)
 
 def process(fn):
-    print 'process', fn
+    print 'process', fn,
 
     outfn = get_filename_from_pcap(fn)
     answer_outfn = os.path.join(answer_dir, outfn)
@@ -54,7 +54,8 @@ def process(fn):
 
     newfn = fn + ".processing"
     os.rename(fn, newfn)
-    parse_pcap.report(newfn, answer_outfn, query_outfn)
+    records = parse_pcap.report(newfn, answer_outfn, query_outfn)
+    print records
     os.unlink(newfn)
 
 

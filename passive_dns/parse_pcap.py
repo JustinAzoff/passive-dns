@@ -82,6 +82,8 @@ def report(fn, answer_outfn, query_outfn):
         qf.write("%s %s %s %s %s %s\n" % (rquery, answer, type, rec['ttl'], date(rec['first']),date(rec['last'])))
     qf.close()
 
+    return len(data)
+
 if __name__ == "__main__":
     import sys
     inf = sys.argv[1]
