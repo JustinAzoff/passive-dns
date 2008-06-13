@@ -44,8 +44,8 @@ def merge_sorted(sorted_stream):
         if (cur['key']  ==prev['key'] and
             cur['value']==prev['value'] and
             cur['type'] ==prev['type']):
-            prev['first'] = min(prev['first'], cur['first'])
-            prev['last']  = max(prev['last'],  cur['last'])
+            prev['first'] = cur['first'] = min(prev['first'], cur['first'])
+            prev['last']  = cur['last']  = max(prev['last'],  cur['last'])
         else:
             yield prev
             prev = cur
