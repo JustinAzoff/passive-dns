@@ -52,6 +52,9 @@ class Searcher:
             self.find_newline()
             line = self.map.readline()
             key = line.split(None,2)[0]
+            if key.startswith(q):
+                break
+
             if q < key:
                 end = mid
                 continue
