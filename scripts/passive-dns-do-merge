@@ -1,0 +1,9 @@
+#!/bin/sh -ex
+DIR=$1
+
+cd $DIR
+rm -rf to_merge
+
+mkdir to_merge
+mv *.txt to_merge
+passive-dns-merge dns_merged.txt to_merge/*
