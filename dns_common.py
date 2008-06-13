@@ -1,3 +1,9 @@
+import os
+LOC="/var/captures/dns/"
+
+answer_dir = os.path.join(LOC, "by_answer")
+query_dir  = os.path.join(LOC, "by_query")
+
 def make_hash(line):
     parts = line.split()
     if len(parts)==8:

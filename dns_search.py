@@ -94,14 +94,14 @@ class SearcherMany:
         merged = dns_merge.merge_and_merge(results)
         return merged
 
-    def search(self, response=None, query=None):
-        if response:
-            q = response
+    def search(self, answer=None, query=None):
+        if answer:
+            q = answer
         if query:
             q = query[::-1]
 
         results = self._search(q)
-        if response:
+        if answer:
             for r in results:
                 yield r
         if query:
