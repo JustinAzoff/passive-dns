@@ -65,8 +65,11 @@ def do_merge_to_file(streams, output):
     for cur in merge_and_merge(streams):
         f.write("%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s\n" % cur)
 
-if __name__ == "__main__":
+def main():
     output = sys.argv[1]
     fns = sys.argv[2:]
     fps = [open(f) for f in fns]
     do_merge_to_file(fps, output)
+
+if __name__ == "__main__":
+    main()

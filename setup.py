@@ -20,7 +20,12 @@ setup(name='passive_dns',
       install_requires=[
           # -*- Extra requirements: -*-
       ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
+      entry_points = {
+          'console_scripts': [
+              'passive-dns-merge    = passive_dns.merge:main',
+              'passive-dns-process  = passive_dns.process:main',
+              'passive-dns-search   = passive_dns.search:main',
+              'passive-dns-searchserver  = passive_dns.searchserver:main',
+          ]
+      }
       )

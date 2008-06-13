@@ -10,7 +10,7 @@ def do_mmap(f, mode):
     size = os.lseek(fd, 0, 2)
     os.lseek(fd, 0, 0)
     m = mmap.mmap(fd, size, prot=mode)
-    return m, size
+    return m, size, fd
 
 SEEK_SET = 0
 SEEK_CUR = 1
@@ -18,7 +18,11 @@ SEEK_CUR = 1
 class Searcher:
     def __init__(self, file):
         self.file = file
-        self.map, self.size = do_mmap(file, mmap.PROT_READ)
+        self.map, self.size, self.fd = do_mmap(file, mmap.PROT_READ)
+
+    def close(self):
+        self.map.close()
+        os.close(self.fd)
 
     def find_newline(self):
         cur = self.map.tell()
@@ -89,6 +93,11 @@ class Searcher:
 class SearcherMany:
     def __init__(self, files):
         self.searchers = [Searcher(f) for f in files]
+
+    def close(self):
+        for x in self.searchers:
+            x.close()
+
     def _search(self, q):
         results = [s.binary_search(q) for s in self.searchers]
         merged = dns_merge.merge_and_merge(results)

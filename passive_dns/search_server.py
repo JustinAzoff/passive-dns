@@ -18,9 +18,14 @@ from passive_dns.common import query_dir, answer_dir
 
 class SearchServer(xmlrpc.XMLRPC):
     def __init__(self):
+        self.q_search = self.a_search = None
         LoopingCall(self._reopen).start(60)
 
     def _reopen(self):
+        for s in self.q_search, self.a_search:
+            if s:
+                s.close()
+
         self.q_search = dns_search.SearcherMany(glob.glob(os.path.join(query_dir,  "dns_*")))
         self.a_search = dns_search.SearcherMany(glob.glob(os.path.join(answer_dir, "dns_*")))
     
