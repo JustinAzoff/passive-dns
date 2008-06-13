@@ -59,11 +59,19 @@ class Searcher:
 
         mid = (start+end)/2
         self.map.seek(mid)
-        seek_to = max(0, self.map.tell() - 2000)
-        self.map.seek(seek_to, SEEK_SET)
-        if seek_to != 0:
+        #now, try and find the FIRST occurance of this key
+        while True:
+            seek_to = max(0, self.map.tell() - 2000)
+            self.map.seek(seek_to, SEEK_SET)
+            if seek_to == 0:
+                break
             pos = self.map.find("\n" + q)
             self.map.seek(pos+1)
+            #if I needed to skip back forward more than 1000, I should be OK
+            #otherwise jump backwards another 2000 and try again
+            if pos - seek_to > 1000:
+                break
+
         while True:
             line = self.map.readline()
             if not line.startswith(q): break
@@ -97,7 +105,9 @@ def main():
     q = sys.argv[1]
     files = sys.argv[2:]
     s = SearcherMany(files)
-    s.search(q)
+    for x in s.search(q):
+        print "%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s" % x
+
 
 if __name__ == "__main__":
     main()
