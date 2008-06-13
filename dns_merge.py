@@ -4,6 +4,7 @@ import sys
 
 from dns_common import make_hash
 
+#like sort -m
 def merge(files):
     #TODO: use heapq instead of min?
     files = dict([(f,None) for f in files])
