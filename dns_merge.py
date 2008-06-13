@@ -2,46 +2,59 @@
 import os
 import sys
 
-def get_file(fn):
-    if fn.endswith(".gz"):
-        f = os.popen('zcat "%s"' % fn)
-    else:
-        f = open(fn)
-    for line in f:
-        yield line.split()
-    f.close()
-
-def parse_file(fn, data):
-    for parts in get_file(fn):
-        if len(parts)==7:
-            answer, query, ttl, datefirst,timefirst, datelast,timelast = parts
-            type = 'A'
-        elif len(parts)==8:
-            answer, query, type, ttl, datefirst,timefirst, datelast,timelast = parts
-
-        first = datefirst + ' ' + timefirst
-        last  = datelast  + ' ' + timelast
-        rec = data.get((answer,query, type))
-        if rec:
-            rec['ttl'] = ttl
-            rec['first'] = min(first, rec['first'])
-            rec['last'] =  max(last,  rec['last'])
-        else:
-            data[(answer, query, type)] = {'ttl': ttl, 'first': first, 'last': last}
-
+from dns_common import make_hash
 
 def merge(files):
-    data = {}
-    for f in files:
-        parse_file(f, data)
+    #TODO: use heapq instead of min?
+    files = dict([(f,None) for f in files])
 
-    data = data.items()
-    data.sort()
-    for (answer,query, type), rec in data:
-        print answer, query, type, rec['ttl'], rec['first'], rec['last']
+    #load in the first key, value from each file
+    for f in files.keys():
+        try :
+            line = f.next() 
+            files[f] = line, f
+        except StopIteration:
+            del files[f]
+
+    while files:
+        line, f = min(files.values())
+        yield line
+
+        try :
+            line = f.next()
+            files[f] = line, f
+        except StopIteration:
+            del files[f]
+
+
+def merge_sorted(sorted_stream, output):
+    f = open(output,'w')
+    sorted_stream = iter(sorted_stream)
+
+    line = sorted_stream.next()
+    prev = make_hash(line)
+
+    for line in sorted_stream:
+        cur = make_hash(line)
+
+        #should have just left it as a list so if cur[0:3] == prev[0:3]
+        if (cur['key']  ==prev['key'] and
+            cur['value']==prev['value'] and
+            cur['type'] ==prev['type']):
+            prev['first'] = min(prev['first'], cur['first'])
+            prev['last']  = max(prev['last'],  cur['last'])
+        else:
+            f.write("%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s\n" % prev)
+            prev = cur
+
+    f.write("%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s\n" % cur)
+
+def do_merge(files, output):
+    fps = [open(f) for f in files]
+    merged = merge(fps)
+    merge_sorted(merged, output)
 
 if __name__ == "__main__":
-    fns = sys.argv[1:]
-    if not fns:
-        fns=['/dev/stdin']
-    merge(fns)
+    output = sys.argv[1]
+    fns = sys.argv[2:]
+    do_merge(fns, output)

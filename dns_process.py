@@ -2,8 +2,13 @@
 import os
 import time
 import datetime
+import dns_parse_pcap
 
 LOC="/var/captures/dns/"
+
+answer_dir = os.path.join(LOC, "by_answer")
+query_dir  = os.path.join(LOC, "by_query")
+
 SIZE_TIMEOUT = 5
 
 def next_filename(f):
@@ -32,30 +37,31 @@ def find(d):
 
 def get_filename_from_pcap(fn):
     pcap_time = datetime.datetime.fromtimestamp(os.stat(fn).st_mtime)
-    new_dir = pcap_time.strftime("%Y/%m/%d")
-    new_name = pcap_time.strftime("dns_%Y-%m-%d_%H:%M.txt.gz")
+    new_name = pcap_time.strftime("dns_%Y-%m-%d_%H:%M.txt")
+    return new_name
 
-    new_dir = os.path.join(LOC, new_dir)
-    if not os.path.exists(new_dir):
-        os.makedirs(new_dir)
-    outfn = os.path.join(new_dir, new_name)
-    return outfn
+def make_dir(d):
+    if not os.path.exists(d):
+        os.makedirs(d)
 
 def process(fn):
     print 'process', fn
 
     outfn = get_filename_from_pcap(fn)
+    answer_outfn = os.path.join(answer_dir, outfn)
+    query_outfn = os.path.join(query_dir, outfn)
+
 
     newfn = fn + ".processing"
     os.rename(fn, newfn)
-    #not sure about leaks, so lets just exec this
-    ret = os.system("dns_parse_pcap.py %s %s" % (newfn, outfn))
-    if ret != 0:
-        raise Exception("Error running dns_parse_pcap %s" % newfn)
+    dns_parse_pcap.report(newfn, answer_outfn, query_outfn)
     os.unlink(newfn)
 
 
 def main():
+    for d in answer_dir, query_dir:
+        make_dir(d)
+
     for f in os.listdir(LOC):
         f = os.path.join(LOC, f)
         if 'processing' in f or 'pcap' not in f: continue

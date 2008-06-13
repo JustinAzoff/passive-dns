@@ -28,6 +28,8 @@ def get_answers(m):
 
 def get_query(m):
     query = m.question[0].to_text().split()[0]
+    if query.endswith("."):
+        query = query[:-1]
     return query
         
 class Statmaker:
@@ -61,26 +63,35 @@ def parse(fn):
 
     return s
 
-def report(fn, outfn):
+def report(fn, answer_outfn, query_outfn):
     s = parse(fn)
-    if outfn.endswith("gz"):
-        o = gzip.open
-    else:
-        o = open
-    f = o(outfn, 'w')
+    af = open(answer_outfn, 'w')
+    qf = open(query_outfn, 'w')
 
-    for (answer, query, type), rec in s.ipnames.iteritems():
-        f.write("%s %s %s %s %s %s\n" % (answer, query, type, rec['ttl'], date(rec['first']),date(rec['last'])))
-    f.close()
+    data = s.ipnames.items()
+    data.sort()
+
+    for (answer, query, type), rec in data:
+        af.write("%s %s %s %s %s %s\n" % (answer, query, type, rec['ttl'], date(rec['first']),date(rec['last'])))
+    af.close()
+
+    #sort by the reversed query string
+    data = [((query[::-1], answer, type), rec) for ((answer, query, type), rec) in data]
+    data.sort()
+    for (rquery, answer, type), rec in data:
+        qf.write("%s %s %s %s %s %s\n" % (rquery, answer, type, rec['ttl'], date(rec['first']),date(rec['last'])))
+    qf.close()
 
 if __name__ == "__main__":
     import sys
     inf = sys.argv[1]
     outf = "/dev/stdout"
-    if len(sys.argv) > 2:
-        outf = sys.argv[2]
+    if len(sys.argv) > 3:
+        outfa = sys.argv[2]
+        outfq = sys.argv[3]
     if outf == "auto":
-        outf = inf.replace(".pcap",".txt.gz")
-        if outf == inf:
+        outfa = inf.replace(".pcap","ans.txt")
+        outfq = inf.replace(".pcap","que.txt")
+        if outfa == inf:
             raise Exception("Same filename???")
-    report(inf, outf)
+    report(inf, outfa, outfq)
