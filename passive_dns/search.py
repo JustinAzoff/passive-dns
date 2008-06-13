@@ -25,12 +25,8 @@ class Searcher:
         os.close(self.fd)
 
     def find_newline(self):
-        cur = self.map.tell()
-        seek_to = max(0, cur - 200)
-        self.map.seek(seek_to, SEEK_SET)
-        data = self.map.read(200)
-        last_newline = data.rindex("\n")
-        self.map.seek(last_newline - 200 + 1, SEEK_CUR)
+        self.map.readline()
+        return self.map.tell()
 
     def search(self, q):
         while True:
@@ -44,56 +40,23 @@ class Searcher:
                 self.find_newline()
 
     def binary_search(self, q):
+        pos = 0
         start = 0
         end = self.size
         found = False
-        while end - start > 10:
-            mid = (start+end)/2
+        while start < end:
+            mid = start + (end-start)/2
             self.map.seek(mid)
-            self.find_newline()
+            pos = self.find_newline()
+            if pos > end:
+                break
             line = self.map.readline()
-            key = line.split(None,2)[0]
-            if key.startswith(q):
-                found = True
-                break
-            if q < key:
+            if q < line:
                 end = mid
-                continue
-            elif q > key:
+            elif q > line:
                 start = mid
-                continue
-            else: #found
-                break
 
-        mid = (start+end)/2
-        self.map.seek(mid)
 
-        #sanity check, is this key even found around where I am looking?
-        #if I don't do this, self.map.find will search to
-        #the end of the file.  read pos-512 to pos+512
-        if not found:
-            cur = self.map.tell()
-            seek_to = max(0, self.map.tell() - 512)
-            to_read = self.map.tell() - seek_to
-            self.map.seek(seek_to, SEEK_SET)
-            data = self.map.read(to_read+512)
-            if q not in data:
-                return
-            self.map.seek(cur, SEEK_SET)
-
-        #now, try and find the FIRST occurance of this key
-        #go back 2000, find the first reference to this ip, repeat if needed
-        while True:
-            seek_to = max(0, self.map.tell() - 2000)
-            self.map.seek(seek_to, SEEK_SET)
-            if seek_to == 0:
-                break
-            pos = self.map.find("\n" + q)
-            self.map.seek(pos+1)
-            #if I needed to re-skip forward more than 1000, I should be OK
-            #otherwise jump backwards another 2000 and try again
-            if pos - seek_to > 1000:
-                break
 
         while True:
             line = self.map.readline()
