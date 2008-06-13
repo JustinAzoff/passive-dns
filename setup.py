@@ -28,7 +28,7 @@ setup(name='passive_dns',
               'passive-dns-merge    = passive_dns.merge:main',
               'passive-dns-process  = passive_dns.process:main',
               'passive-dns-search   = passive_dns.search:main',
-              'passive-dns-searchserver  = passive_dns.searchserver:main',
+              'passive-dns-searchserver  = passive_dns.search_server:main',
           ]
       }
       )
