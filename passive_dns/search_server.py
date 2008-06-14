@@ -16,6 +16,8 @@ import os, glob
 from passive_dns import search as dns_search
 from passive_dns.common import query_dir, answer_dir
 
+import simplejson
+
 class SearchServer(xmlrpc.XMLRPC):
     def __init__(self):
         self.q_search = self.a_search = None
@@ -33,10 +35,10 @@ class SearchServer(xmlrpc.XMLRPC):
         return 'hello'
 
     def xmlrpc_search_question(self, q):
-        return list(self.q_search.search(query=q))
+        return simplejson.dumps(list(self.q_search.search(query=q)))
 
     def xmlrpc_search_answer(self, q):
-        return list(self.a_search.search(answer=q))
+        return simplejson.dumps(list(self.a_search.search(answer=q)))
 
 class ServerContextFactory:
 
