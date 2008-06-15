@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""Iterate through a directory of dns pcap files and
+export any new and unchanging file to plain txt"""
+
 import os
 import time
 import datetime

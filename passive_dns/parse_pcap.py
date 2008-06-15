@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""Extract from a pcap file of all dns queries:
+time, query, answer, type, ttl
+"""
 import pcapy
 import dns.message
 import time, datetime

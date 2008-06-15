@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""Merge multiple dns txt files together.
+Also used to merge search results from individual txt files"""
+
 import os
 import sys
 
@@ -6,6 +9,7 @@ from passive_dns.common import make_hash
 
 #like sort -m
 def merge(files):
+    """Merge mutliple sorted files(or any iterable) together"""
     #TODO: use heapq instead of min?
     files = dict([(f,None) for f in files])
 
@@ -29,6 +33,8 @@ def merge(files):
 
 
 def merge_sorted(sorted_stream):
+    """Merge consecutive dns records together"""
+    #TODO: use itertools.groupby?
     sorted_stream = iter(sorted_stream)
 
     try:
