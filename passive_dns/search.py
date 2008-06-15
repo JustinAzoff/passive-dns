@@ -44,7 +44,8 @@ class Searcher:
         start = 0
         end = self.size
         found = False
-        while start < end:
+        #this can get stuck with start = xxx and end = xxx+1, probably from the \n
+        while start < end -1:
             mid = start + (end-start)/2
             self.map.seek(mid)
             pos = self.find_newline()
