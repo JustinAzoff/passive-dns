@@ -12,6 +12,9 @@ class SearchClient:
     def search_question(self, q):
         return simplejson.loads(self.s.search_question(q))
 
+    def reopen_files(self):
+        return self.s.reopen_files()
+
 def show(r):
     print "%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s" % r
 

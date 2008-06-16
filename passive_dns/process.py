@@ -6,6 +6,7 @@ import os
 import time
 import datetime
 from passive_dns import parse_pcap
+from passive_dns import client
 
 LOC="/var/captures/dns/"
 
@@ -66,12 +67,19 @@ def main():
     for d in answer_dir, query_dir:
         make_dir(d)
 
+    work_done = False
+
     for f in os.listdir(LOC):
         f = os.path.join(LOC, f)
         if 'processing' in f or 'pcap' not in f: continue
 
         if os.path.exists(next_filename(f)) or not is_growing(f):
             process(f)
+            work_done = True
+
+    if work_done:
+        client.SearchClient().reopen_files()
+        
 
 if __name__ == "__main__":
     main()

@@ -21,9 +21,10 @@ import simplejson
 class SearchServer(xmlrpc.XMLRPC):
     def __init__(self):
         self.q_search = self.a_search = None
-        LoopingCall(self._reopen).start(60)
+        LoopingCall(self._reopen).start(300)
 
     def _reopen(self):
+        print "reopening data files"
         for s in self.q_search, self.a_search:
             if s:
                 s.close()
@@ -39,6 +40,10 @@ class SearchServer(xmlrpc.XMLRPC):
 
     def xmlrpc_search_answer(self, q):
         return simplejson.dumps(list(self.a_search.search(answer=q)))
+
+    def xmlrpc_reopen_files(self):
+        self._reopen()
+        return "ok"
 
 class ServerContextFactory:
 

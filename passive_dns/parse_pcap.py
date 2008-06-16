@@ -60,6 +60,8 @@ class Statmaker:
 
         
 def parse(fn):
+    """Process a pcap file and return a dictionary of
+        (answer, query, type) -> {first, last, ttl}"""
     s = Statmaker()
     pcap = pcapy.open_offline(fn)
     pcap.loop(0, s)
