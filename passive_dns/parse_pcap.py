@@ -30,7 +30,10 @@ def get_answers(m):
                 #raise 'test'
 
 def get_query(m):
-    query = m.question[0].to_text().split()[0]
+    try :
+        query = m.question[0].to_text().split()[0]
+    except IndexError:
+        return None
     if query.endswith("."):
         query = query[:-1]
     return query.lower()
@@ -47,6 +50,8 @@ class Statmaker:
         except:
             return
         query = get_query(m)
+        if not query:
+            return
 
         ipn = self.ipnames
 
