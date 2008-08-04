@@ -4,6 +4,7 @@ Also used to merge search results from individual txt files"""
 
 import os
 import sys
+import datetime
 
 from passive_dns.common import make_hash
 
@@ -68,7 +69,9 @@ def do_merge_to_file(streams, output):
         raise Exception("Output file %s already exists" % output)
     f = open(output,'w')
 
+    week_ago = str(datetime.datetime.today() - datetime.timedelta(days=7))
     for cur in merge_and_merge(streams):
+        if cur['last'] <= week_ago: continue
         f.write("%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s\n" % cur)
 
 def main():
