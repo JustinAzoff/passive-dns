@@ -25,9 +25,8 @@ class SearchServer(xmlrpc.XMLRPC):
 
     def _reopen(self):
         print "reopening data files"
-        for s in self.q_search, self.a_search:
-            if s:
-                s.close()
+        self.q_search and self.q_search.close()
+        self.a_search and self.a_search.close()
 
         self.q_search = dns_search.SearcherMany(glob.glob(os.path.join(query_dir,  "dns_*")))
         self.a_search = dns_search.SearcherMany(glob.glob(os.path.join(answer_dir, "dns_*")))
