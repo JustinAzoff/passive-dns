@@ -1,9 +1,15 @@
 #!/bin/sh -ex
-DIR=$1
 
-cd $DIR
-rm -rf to_merge
+merge () {
+    DIR=$1
+    cd $DIR
+    rm -rf to_merge
 
-mkdir to_merge
-mv *.txt to_merge
-passive-dns-merge dns_merged.txt to_merge/*
+    mkdir to_merge
+    mv *.txt to_merge
+    passive-dns-merge dns_merged.txt to_merge/*
+}
+
+
+merge /var/captures/dns/by_answer
+merge /var/captures/dns/by_query
