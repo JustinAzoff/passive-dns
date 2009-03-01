@@ -16,7 +16,12 @@ import os, glob
 from passive_dns import search as dns_search
 from passive_dns.common import query_dir, answer_dir
 
-import simplejson
+i:mport simplejson
+try:
+    from cjson import encode as dump_json
+except ImportError:
+    from simplejson import dumps as dump_json
+
 
 class SearchServer(xmlrpc.XMLRPC):
     def __init__(self):
@@ -42,10 +47,10 @@ class SearchServer(xmlrpc.XMLRPC):
         return 'hello'
 
     def xmlrpc_search_question(self, q):
-        return simplejson.dumps(list(self.q_search.search(query=q)))
+        return dump_json(list(self.q_search.search(query=q)))
 
     def xmlrpc_search_answer(self, q):
-        return simplejson.dumps(list(self.a_search.search(answer=q)))
+        return dump_json(list(self.a_search.search(answer=q)))
 
     def xmlrpc_reopen_files(self):
         self._reopen()

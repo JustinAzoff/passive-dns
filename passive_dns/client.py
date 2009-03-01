@@ -1,5 +1,8 @@
 import xmlrpclib
-import simplejson
+try:
+    from cjson import decode as load_json
+except ImportError:
+    from simplejson import loads as load_json
 
 
 class SearchClient:
@@ -7,10 +10,10 @@ class SearchClient:
         self.s = xmlrpclib.Server(server)
 
     def search_answer(self, q):
-        return simplejson.loads(self.s.search_answer(q))
+        return load_json(self.s.search_answer(q))
 
     def search_question(self, q):
-        return simplejson.loads(self.s.search_question(q))
+        return load_json(self.s.search_question(q))
 
     def reopen_files(self):
         return self.s.reopen_files()
