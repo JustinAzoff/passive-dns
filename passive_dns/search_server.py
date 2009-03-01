@@ -16,7 +16,6 @@ import os, glob
 from passive_dns import search as dns_search
 from passive_dns.common import query_dir, answer_dir
 
-i:mport simplejson
 try:
     from cjson import encode as dump_json
 except ImportError:
