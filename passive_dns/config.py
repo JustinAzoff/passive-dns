@@ -7,7 +7,7 @@ def _read_config(fn):
 
 def find_config():
     home = os.path.expanduser("~/.passive_dns.cfg")
-    system = "/etc/passivedns.cfg"
+    system = "/etc/passive_dns.cfg"
     cur = "passive_dns.cfg"
 
     configs = (cur, home, system)
