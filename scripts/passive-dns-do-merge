@@ -1,4 +1,5 @@
 #!/bin/sh -ex
+eval "$(passive-dns-dump-config)"
 
 merge () {
     DIR=$1
@@ -11,5 +12,5 @@ merge () {
 }
 
 
-merge /var/captures/dns/by_answer
-merge /var/captures/dns/by_query
+merge ${DATADIR}/by_answer
+merge ${DATADIR}/by_query

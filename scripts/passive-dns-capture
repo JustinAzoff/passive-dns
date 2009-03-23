@@ -1,8 +1,8 @@
 #!/bin/sh
-LOC=/var/captures/dns
+eval "$(passive-dns-dump-config)"
 
 fn=dns_$(date +"%Y-%m-%d_%H:%M").pcap
 
-o=${LOC}/$fn
+o=${DATADIR}/$fn
 echo $o
-tcpdump -n -i sniff1 'udp port 53 and ( udp[10] & 0x04 != 0 )' -w $o -s 0 -C 10
+tcpdump -n -i $INTERFACE 'udp port 53 and ( udp[10] & 0x04 != 0 )' -w $o -s 0 -C 10

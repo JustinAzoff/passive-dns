@@ -5,7 +5,7 @@ def _read_config(fn):
     execfile(fn,{},config)
     return config
 
-def read_config():
+def find_config():
     home = os.path.expanduser("~/.passive_dns.cfg")
     system = "/etc/passivedns.cfg"
     cur = "passive_dns.cfg"
@@ -13,6 +13,14 @@ def read_config():
     configs = (cur, home, system)
     for fn in configs:
         if os.path.exists(fn):
-            return _read_config(fn)
+            return fn
 
     raise Exception("No configuration file found (tried %s, %s and %s) " % configs)
+
+def read_config():
+    fn = find_config()
+    return _read_config(fn)
+
+def dump_config():
+    fn = find_config()
+    print open(fn).read()
