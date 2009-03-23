@@ -1,8 +1,5 @@
 import xmlrpclib
-try:
-    from cjson import decode as load_json
-except ImportError:
-    from simplejson import loads as load_json
+from simplejson import loads as load_json
 
 
 class SearchClient:
