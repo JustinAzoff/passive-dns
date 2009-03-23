@@ -71,8 +71,10 @@ def main():
     application = service.Application('dns_search')
     serviceCollection = service.IServiceCollection(application)
     site = server.Site(resource.IResource(SearchServer()))
-    iface = config.read_config()['SERVER_BIND']
-    i = internet.TCPServer(7084, site, interface=iface)
+    cfg = config.read_config()
+    iface = cfg['SERVER_BIND']
+    port  = cfg['SERVER_PORT']
+    i = internet.TCPServer(port, site, interface=iface)
     i.setServiceParent(serviceCollection)
 
     #i = internet.SSLServer(7083, site, ServerContextFactory())
