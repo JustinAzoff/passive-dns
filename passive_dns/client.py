@@ -1,9 +1,11 @@
 import xmlrpclib
 from simplejson import loads as load_json
-
+from passive_dns import config
 
 class SearchClient:
-    def __init__(self, server="http://joe:7084"):
+    def __init__(self, server=None):
+        if not server:
+            server = config.read_config()['SERVER']
         self.s = xmlrpclib.Server(server)
 
     def search_answer(self, q):

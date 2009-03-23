@@ -14,7 +14,7 @@ from twisted.internet.task import LoopingCall
 
 import os, glob
 from passive_dns import search as dns_search
-from passive_dns.common import query_dir, answer_dir
+from passive_dns import config
 
 from simplejson import dumps as dump_json
 
@@ -34,6 +34,10 @@ class SearchServer(xmlrpc.XMLRPC):
             self.a_search and self.a_search.close()
         except:
             pass
+
+        LOC = config.read_config()['DATADIR']
+        answer_dir = os.path.join(LOC, "by_answer")
+        query_dir  = os.path.join(LOC, "by_query")
 
         self.q_search = dns_search.SearcherMany(glob.glob(os.path.join(query_dir,  "dns_*")))
         self.a_search = dns_search.SearcherMany(glob.glob(os.path.join(answer_dir, "dns_*")))
@@ -67,7 +71,8 @@ def main():
     application = service.Application('dns_search')
     serviceCollection = service.IServiceCollection(application)
     site = server.Site(resource.IResource(SearchServer()))
-    i = internet.TCPServer(7084, site)
+    iface = config.read_config()['SERVER_BIND']
+    i = internet.TCPServer(7084, site, interface=iface)
     i.setServiceParent(serviceCollection)
 
     #i = internet.SSLServer(7083, site, ServerContextFactory())
