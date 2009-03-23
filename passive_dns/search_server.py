@@ -16,11 +16,7 @@ import os, glob
 from passive_dns import search as dns_search
 from passive_dns.common import query_dir, answer_dir
 
-try:
-    from cjson import encode as dump_json
-except ImportError:
-    from simplejson import dumps as dump_json
-
+from simplejson import dumps as dump_json
 
 class SearchServer(xmlrpc.XMLRPC):
     def __init__(self):
