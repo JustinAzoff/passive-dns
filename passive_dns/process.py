@@ -7,9 +7,9 @@ import time
 import datetime
 from passive_dns import parse_pcap
 from passive_dns import client
+from passive_dns import config
 
-LOC="/var/captures/dns/"
-
+LOC = config.read_config()['DATADIR']
 answer_dir = os.path.join(LOC, "by_answer")
 query_dir  = os.path.join(LOC, "by_query")
 
@@ -68,6 +68,7 @@ def main():
         make_dir(d)
 
     work_done = False
+
 
     for f in os.listdir(LOC):
         f = os.path.join(LOC, f)
