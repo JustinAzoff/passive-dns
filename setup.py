@@ -20,7 +20,8 @@ setup(name='passive_dns',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-          # -*- Extra requirements: -*-
+        "pcapy",
+        "dnspython",
       ],
       scripts=glob('scripts/*'),
       entry_points = {
