@@ -1,0 +1,4 @@
+#!/bin/sh
+exec 2>&1
+setuidgid pdns passive-dns-do-merge
+exec sleep 7h
