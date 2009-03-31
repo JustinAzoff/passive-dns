@@ -5,7 +5,7 @@ from glob import glob
 
 version = '0.1'
 
-setup(name='passive_dns',
+setup(name='passive-dns',
       version=version,
       description="Passive DNS Logger",
       long_description="""\
