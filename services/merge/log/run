@@ -1,0 +1,2 @@
+#!/bin/sh
+exec setuidgid pdns multilog t ./main
