@@ -1,0 +1,69 @@
+#!/bin/sh
+
+set -e
+
+acct=$1
+logacct=$2
+dir=$3
+logdir=$4
+
+if test x$logdir = x; then
+  echo "passive-dns-conf: usage: passive-dns-conf acct logacct /etc/passive-dns /var/log/passive-dns"
+  exit 1;
+fi
+
+setup_log_service()
+{
+    service=$1
+    mkdir $dir/$service/log
+    echo "#!/bin/sh" > $dir/$service/log/run
+    echo "exec chpst -u$logacct svlogd -tt ./main" >> $dir/$service/log/run
+    chmod 755 $dir/$service/log/run
+
+    mkdir -p $logdir/$service
+    chown $logacct $logdir/$service
+    ln -s $logdir/$service $dir/$service/log/main
+}
+
+# capture
+s=$dir/capture
+mkdir -p $s
+echo "#!/bin/sh" > $s/run
+echo "exec 2>&1" >> $s/run
+echo "exec passive-dns-capture" >> $s/run
+chmod 755 $s/run
+
+# process
+s=$dir/process
+mkdir -p $s
+echo "#!/bin/sh" > $s/run
+echo "exec 2>&1" >> $s/run
+echo "exec chpst -u$acct passive-dns-process" >> $s/run
+
+echo "#!/bin/sh" > $s/finish
+echo "exec sleep 60" >> $s/finish
+chmod 755 $s/finish
+
+
+# merge
+s=$dir/merge
+mkdir -p $s
+echo "#!/bin/sh" > $s/run
+echo "exec 2>&1" >> $s/run
+echo "exec chpst -u$acct passive-dns-do-merge" >> $s/run
+
+echo "#!/bin/sh" > $s/finish
+echo "exec sleep 7h" >> $s/finish
+chmod 755 $s/finish
+
+# server
+s=$dir/server
+mkdir -p $s
+echo "#!/bin/sh" > $s/run
+echo "exec 2>&1" >> $s/run
+echo "exec chpst -u$acct passive-dns-searchserver" >> $s/run
+
+for s in capture process merge server;do
+    chmod 755 $dir/$s/run
+    setup_log_service $s
+done
