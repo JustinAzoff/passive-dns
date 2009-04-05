@@ -67,3 +67,6 @@ for s in capture process merge server;do
     chmod 755 $dir/$s/run
     setup_log_service $s
 done
+#for s in capture process merge server;do
+#    echo update-service --add $dir/$s passive_dns_$s
+#done
