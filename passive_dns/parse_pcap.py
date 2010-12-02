@@ -6,8 +6,11 @@ import pcapy
 import dns.message
 import time, datetime
 import gzip
-import psyco
-psyco.full()
+try:
+    import psyco
+    psyco.full()
+except:
+    pass
 
 OFFSET = 42
 A = 1
