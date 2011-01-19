@@ -17,19 +17,22 @@ def expload(qs, seen=None):
         a_results = c.search_answer(q + " ")
         results = q_results + a_results
         for x in results:
-            show(x)
+            yield x
 
             if x['key'] not in seen:
                 new.append(x['key'])
             if x['value'] not in seen:
                 new.append(x['value'])
+    if not new:
+        return
 
-    if new:
-        expload(new, seen)
+    for x in expload(new, seen):
+        yield x
 
 def main():
     qs = sys.argv[1:]
-    expload(qs)
+    for x in expload(qs):
+        show(x)
 
 if __name__ == "__main__":
     main()
