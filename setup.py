@@ -31,6 +31,7 @@ setup(name='passive-dns',
               'passive-dns-search   = passive_dns.search:main',
               'passive-dns-searchserver  = passive_dns.search_server:main',
               'passive-dns-client   = passive_dns.client:main',
+              'passive-dns-expload  = passive_dns.expload:main',
               'passive-dns-dump-config = passive_dns.config:dump_config',
           ]
       }
