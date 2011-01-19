@@ -13,8 +13,8 @@ def expload(qs, seen=None):
     new = []
     
     for q in qs:
-        q_results = c.search_question(q)
-        a_results = c.search_answer(q)
+        q_results = c.search_question(" " + q)
+        a_results = c.search_answer(q + " ")
         results = q_results + a_results
         for x in results:
             show(x)
