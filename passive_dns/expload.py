@@ -7,7 +7,7 @@ c = SearchClient()
 
 
 def expload(qs):
-    seen = set()
+    seen = set(qs)
     todo = qs
     while todo:
         new = []
