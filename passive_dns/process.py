@@ -72,6 +72,8 @@ def main():
 
     for f in os.listdir(LOC):
         f = os.path.join(LOC, f)
+        if not os.path.exists(f): #file disappeared
+            continue
         if 'processing' in f or 'pcap' not in f: continue
 
         if os.path.exists(next_filename(f)) or not is_growing(f):
