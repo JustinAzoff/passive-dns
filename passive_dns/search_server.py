@@ -19,10 +19,10 @@ from passive_dns import config
 from simplejson import dumps as dump_json
 
 class SearchServer(xmlrpc.XMLRPC):
-    allowNone = True
     def __init__(self):
         self.q_search = self.a_search = None
         LoopingCall(self._reopen).start(300)
+        xmlrpc.XMLRPC.__init__(self, allowNone=True)
 
     def _reopen(self):
         print "reopening data files"
