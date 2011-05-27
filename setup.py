@@ -3,7 +3,7 @@ import sys, os
 from glob import glob
 
 
-version = '0.1'
+version = '0.2'
 
 setup(name='passive-dns',
       version=version,
