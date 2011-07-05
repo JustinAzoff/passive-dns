@@ -17,6 +17,8 @@ def payloads(x):
         else:
             break
 
+wanted_types = ['A', 'CNAME']
+
 class Statmaker:
     def __init__(self):
         self.ipnames = {}
@@ -33,6 +35,7 @@ class Statmaker:
 
         for answer, type, ttl in resp:
             tup = (answer, query, type)
+            if type not in wanted_types: continue
             if tup in ipn:
                 r = ipn[tup]
                 r.update({'last': ts, 'ttl': ttl})
