@@ -3,7 +3,7 @@ import sys, os
 from glob import glob
 
 
-version = '0.2'
+version = '0.3'
 
 setup(name='passive-dns',
       version=version,
@@ -20,9 +20,10 @@ setup(name='passive-dns',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-        "pcapy",
-        "dnspython",
       ],
+      extras_require = {
+          "server": ["pcapy", "dnspython"],
+      },
       scripts=glob('scripts/*'),
       entry_points = {
           'console_scripts': [
