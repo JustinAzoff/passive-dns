@@ -19,7 +19,7 @@ from passive_dns import config
 from simplejson import dumps as dump_json
 
 class SearchServer(xmlrpc.XMLRPC):
-    self.useDateTime = True
+    useDateTime = True
     def __init__(self):
         self.q_search = self.a_search = None
         LoopingCall(self._reopen).start(300)
