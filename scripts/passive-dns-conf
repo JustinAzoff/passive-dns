@@ -38,7 +38,7 @@ s=$dir/process
 mkdir -p $s
 echo "#!/bin/sh" > $s/run
 echo "exec 2>&1" >> $s/run
-echo "exec chpst -u$acct passive-dns-process" >> $s/run
+echo "exec chpst -u$acct chrt --batch 0 ionice -c 3 nice passive-dns-process" >> $s/run
 
 echo "#!/bin/sh" > $s/finish
 echo "exec sleep 60" >> $s/finish
@@ -50,7 +50,7 @@ s=$dir/merge
 mkdir -p $s
 echo "#!/bin/sh" > $s/run
 echo "exec 2>&1" >> $s/run
-echo "exec chpst -u$acct passive-dns-do-merge" >> $s/run
+echo "exec chpst -u$acct chrt --batch 0 ionice -c 3 nice passive-dns-do-merge" >> $s/run
 
 echo "#!/bin/sh" > $s/finish
 echo "exec sleep 7h" >> $s/finish
