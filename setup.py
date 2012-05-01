@@ -1,9 +1,8 @@
 from setuptools import setup, find_packages
-import sys, os
 from glob import glob
 
 
-version = '0.3'
+version = '0.4'
 
 setup(name='passive-dns',
       version=version,
@@ -22,7 +21,8 @@ setup(name='passive-dns',
       install_requires=[
       ],
       extras_require = {
-          "server": ["pcapy", "dnspython"],
+          "server": ["pcapy", "dnspython","tornado"],
+          "client": ["requests"],
       },
       scripts=glob('scripts/*'),
       entry_points = {
