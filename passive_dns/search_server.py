@@ -1,32 +1,29 @@
 #!/usr/bin/env python
 
-import xmlrpclib
-from twisted.web import xmlrpc, server, http, resource
-from twisted.internet import defer, protocol, reactor
-
-from twisted.application import service, internet
-from twisted.internet.task import LoopingCall
-
-#from OpenSSL import SSL
-
-#import datetime
-#import time
-
 import os, glob
 from passive_dns import search as dns_search
 from passive_dns import config
 
-from simplejson import dumps as dump_json
+import tornado.options
+import tornado.httpserver
+import tornado.ioloop
+import tornado.web
 
-class SearchServer(xmlrpc.XMLRPC):
-    useDateTime = True
+import logging
+
+try :
+    from json import dumps as dump_json
+except ImportError:
+    from simplejson import dumps as dump_json
+
+class PassiveDnsSearcher:
+
     def __init__(self):
         self.q_search = self.a_search = None
-        LoopingCall(self._reopen).start(300)
-        xmlrpc.XMLRPC.__init__(self, allowNone=True)
+        self.reopen()
 
-    def _reopen(self):
-        print "reopening data files"
+    def reopen(self):
+        logging.debug("reopening data files")
         try :
             self.q_search and self.q_search.close()
         except:
@@ -43,47 +40,52 @@ class SearchServer(xmlrpc.XMLRPC):
 
         self.q_search = dns_search.SearcherMany(glob.glob(os.path.join(query_dir,  "dns_*")))
         self.a_search = dns_search.SearcherMany(glob.glob(os.path.join(answer_dir, "dns_*")))
-    
-    def xmlrpc_hello(self):
-        return 'hello'
 
-    def xmlrpc_search_question(self, q):
-        return dump_json(list(self.q_search.search(query=q)))
+#FIXME: This should be passed in from main somehow, yes?
+P = PassiveDnsSearcher()
 
-    def xmlrpc_search_answer(self, q):
-        return dump_json(list(self.a_search.search(answer=q)))
+class IndexHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write('hello\n')
 
-    def xmlrpc_reopen_files(self):
-        self._reopen()
-        return "ok"
+class SearchQuery(tornado.web.RequestHandler):
+    def get(self, q):
+        self.write(dump_json(list(P.q_search.search(query=q))))
 
-class ServerContextFactory:
+class SearchAnswer(tornado.web.RequestHandler):
+    def get(self, q):
+        self.write(dump_json(list(P.a_search.search(answer=q))))
 
-    def getContext(self):
-        """Create an SSL context.
+class Search(tornado.web.RequestHandler):
+    def get(self, q):
+        queries = list(P.q_search.search(query=q))
+        answers = list(P.a_search.search(answer=q))
+        self.write(dump_json(queries + answers))
 
-        This is a sample implementation that loads a certificate from a file
-        called 'server.pem'."""                               
-        ctx = SSL.Context(SSL.SSLv23_METHOD)
-        ctx.use_certificate_file('server.pem')
-        ctx.use_privatekey_file ('server.pem')
-        return ctx
+class Reopen(tornado.web.RequestHandler):
+    def post(self):
+        P.reopen()
+        self.write("ok\n")
 
 def main():
-    application = service.Application('dns_search')
-    serviceCollection = service.IServiceCollection(application)
-    site = server.Site(resource.IResource(SearchServer()))
+    tornado.options.parse_command_line()
+
     cfg = config.read_config()
     iface = cfg['SERVER_BIND']
     port  = cfg['SERVER_PORT']
-    i = internet.TCPServer(port, site, interface=iface)
-    i.setServiceParent(serviceCollection)
 
-    #i = internet.SSLServer(7083, site, ServerContextFactory())
-    #i.setServiceParent(serviceCollection)
-
-    i.startService()
-    reactor.run()
+    application = tornado.web.Application([
+        (r"/", IndexHandler),
+        (r"/search/query/(..*)", SearchQuery),
+        (r"/search/answer/(..*)", SearchAnswer),
+        (r"/search/(..*)", Search),
+        (r"/reopen", Reopen),
+        ])
+    http_server = tornado.httpserver.HTTPServer(application)
+    http_server.listen(port, iface)
+    io_loop = tornado.ioloop.IOLoop.instance()
+    tornado.ioloop.PeriodicCallback(P.reopen,1000*60*5,io_loop).start()
+    io_loop.start()
 
 if __name__ == "__main__": 
     main()
