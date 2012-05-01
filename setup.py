@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from glob import glob
 
 
-version = '0.5'
+version = '0.6'
 
 setup(name='passive-dns',
       version=version,
@@ -19,10 +19,10 @@ setup(name='passive-dns',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
+          "requests",
       ],
       extras_require = {
           "server": ["pcapy", "dnspython","tornado"],
-          "client": ["requests"],
       },
       scripts=glob('scripts/*'),
       entry_points = {
