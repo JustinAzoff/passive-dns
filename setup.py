@@ -22,6 +22,7 @@ setup(name='passive-dns',
       ],
       extras_require = {
           "server": ["pcapy", "dnspython","tornado"],
+          "client": ["requests"],
       },
       scripts=glob('scripts/*'),
       entry_points = {
