@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from glob import glob
 
 
-version = '0.6'
+version = '0.7'
 
 setup(name='passive-dns',
       version=version,
