@@ -11,6 +11,8 @@ import tornado.web
 
 import logging
 
+import urllib2
+
 try :
     from json import dumps as dump_json
 except ImportError:
@@ -50,14 +52,17 @@ class IndexHandler(tornado.web.RequestHandler):
 
 class SearchQuery(tornado.web.RequestHandler):
     def get(self, q):
+        q = urllib2.unquote(q)
         self.write(dump_json(list(P.q_search.search(query=q))))
 
 class SearchAnswer(tornado.web.RequestHandler):
     def get(self, q):
+        q = urllib2.unquote(q)
         self.write(dump_json(list(P.a_search.search(answer=q))))
 
 class Search(tornado.web.RequestHandler):
     def get(self, q):
+        q = urllib2.unquote(q)
         queries = list(P.q_search.search(query=q))
         answers = list(P.a_search.search(answer=q))
         self.write(dump_json(queries + answers))
