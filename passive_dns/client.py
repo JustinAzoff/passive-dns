@@ -4,6 +4,7 @@ try :
 except ImportError:
     from simplejson import loads as load_json
 from passive_dns import config
+from passive_dns.common import calc_checksum
 
 class SearchClient:
     def __init__(self, server=None):
@@ -25,6 +26,15 @@ class SearchClient:
 
     def reopen_files(self):
         return requests.post(self.server + "/reopen").content
+
+    def upload_pcap(self, filename):
+        with open(filename, 'rb') as f:
+            body = f.read()
+
+        checksum = calc_checksum(body)
+        data  = { "checksum": checksum}
+        files = { "upload.pcap": ("upload.pcap", body)}
+        return requests.post(self.server + "/upload_pcap", files=files, data=data)
 
 def show(r):
     print "%(key)s %(value)s %(type)s %(ttl)s %(first)s %(last)s" % r
