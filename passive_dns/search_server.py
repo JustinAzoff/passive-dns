@@ -84,7 +84,7 @@ class UploadPcap(tornado.web.RequestHandler):
         if remote_ip not in UPLOADERS:
             raise tornado.web.HTTPError(403)
         body = self.request.files['upload.pcap'][0]['body']
-        expected_checksum = self.request.get_argument("checksum")
+        expected_checksum = self.get_argument("checksum")
 
         checksum = calc_checksum(body)
         if checksum != expected_checksum:
