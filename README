@@ -1,5 +1,0 @@
-passive-dns-capture: creates pcaps
-passive-dns-process: converts pcaps to .txt files
-passive-dns-merge: merges multiple .txt together
-passive-dns-do-merge: runs passive-dns-merge with the appropriate arguments
-passive-dns-searchserver: xml-rpc server
