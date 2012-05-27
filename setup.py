@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from glob import glob
 
 
-version = '0.5'
+version = '0.10'
 
 setup(name='passive-dns',
       version=version,
@@ -19,16 +19,17 @@ setup(name='passive-dns',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
+          "requests>=0.12.1", #Ability to add string file uploads
       ],
       extras_require = {
           "server": ["pcapy", "dnspython","tornado"],
-          "client": ["requests"],
       },
       scripts=glob('scripts/*'),
       entry_points = {
           'console_scripts': [
               'passive-dns-merge    = passive_dns.merge:main',
               'passive-dns-process  = passive_dns.process:main',
+              'passive-dns-upload   = passive_dns.upload:main',
               'passive-dns-search   = passive_dns.search:main',
               'passive-dns-searchserver  = passive_dns.search_server:main',
               'passive-dns-client   = passive_dns.client:main',

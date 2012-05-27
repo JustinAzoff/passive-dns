@@ -14,10 +14,12 @@ except:
 
 OFFSET = 42
 A = 1
+AAAA = 28
 CNAME = 5
 
 TYPES = {
     A: 'A',
+    AAAA: 'AAAA',
     CNAME: 'CNAME'
 }
 

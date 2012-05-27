@@ -44,6 +44,16 @@ echo "#!/bin/sh" > $s/finish
 echo "exec sleep 60" >> $s/finish
 chmod 755 $s/finish
 
+# upload
+s=$dir/upload
+mkdir -p $s
+echo "#!/bin/sh" > $s/run
+echo "exec 2>&1" >> $s/run
+echo "exec chpst -u$acct nice passive-dns-upload" >> $s/run
+
+echo "#!/bin/sh" > $s/finish
+echo "exec sleep 60" >> $s/finish
+chmod 755 $s/finish
 
 # merge
 s=$dir/merge
@@ -63,7 +73,7 @@ echo "#!/bin/sh" > $s/run
 echo "exec 2>&1" >> $s/run
 echo "exec chpst -u$acct passive-dns-searchserver" >> $s/run
 
-for s in capture process merge server;do
+for s in capture process merge server process;do
     chmod 755 $dir/$s/run
     setup_log_service $s
 done
